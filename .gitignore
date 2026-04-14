@@ -7,7 +7,7 @@ wheels/
 *.egg-info
 .idea/
 __pycache__/
-*.pyc
+*.pycub
 .venv/
 .env
 .python-version

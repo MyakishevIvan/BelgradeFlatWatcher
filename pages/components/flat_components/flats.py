@@ -24,5 +24,4 @@ class Flats:
                 publication_date = component.get_publication_date(),
             )
             flats.append(flat)
-        return flats
-        
+        return flats        

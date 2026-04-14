@@ -1,5 +1,6 @@
 import time
 
+from selenium.common import StaleElementReferenceException, ElementClickInterceptedException
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -48,3 +49,17 @@ class BaseElement:
         if not visible_elements:
             raise RuntimeError(f"No visible elements found.")
         visible_elements[0].click()
+
+    def try_click_by_first_visible(self) -> bool:
+        elements = self._driver.find_elements(*self._locator)
+    
+        for element in elements:
+            try:
+                if element.is_displayed() and element.is_enabled():
+                    element.click()
+                    return True
+            except (StaleElementReferenceException, ElementClickInterceptedException):
+                continue
+    
+        return False
+        

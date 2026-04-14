@@ -17,6 +17,7 @@ class MainPage(BasePage):
     min_rooms_selector = Selector(By.CSS_SELECTOR, 'select[data-facet-type="select-box-from"]')
     max_rooms_selector = Selector(By.CSS_SELECTOR, 'select[data-facet-type="select-box-to"]')
     search_button = Button(By.CSS_SELECTOR, '.btn-main.refresh-display')
+    continue_button = Button(By.CLASS_NAME, 'system-notification-confirm')
     
     def __init__(self, driver: WebDriver, url: str):
         super().__init__(driver, url)
@@ -44,7 +45,7 @@ class MainPage(BasePage):
         self.max_price_input.enter_text(max_price)
         self.min_square_input.enter_text(min_square)
         self.max_square_input.enter_text(max_square)
-        self.min_rooms_selector.set_element_from_selector_by_text(min_rooms, wait_before=1)
-        self.max_rooms_selector.set_element_from_selector_by_text(max_rooms, wait_before=1)
+        self.min_rooms_selector.set_element_from_selector_by_text(min_rooms, wait_before=2)
+        self.max_rooms_selector.set_element_from_selector_by_text(max_rooms, wait_before=2)
         self.search_button.click_by_first_visible()
         self.refresh()

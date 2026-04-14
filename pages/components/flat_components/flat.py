@@ -9,3 +9,11 @@ class Flat:
     price: str
     square: str
     publication_date: date
+
+    def __str__(self):
+        return (
+            f'<a href="{self.url}">{self.name}</a>\n'
+            f'price: {self.price}\n'
+            f'square: {self.square}\n'
+            f'publication date: {self.publication_date}\n'
+        )

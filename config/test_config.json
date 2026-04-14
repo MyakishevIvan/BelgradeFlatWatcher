@@ -2,8 +2,8 @@
   "base_url": "https://www.halooglasi.com/nekretnine/izdavanje-stanova/beograd",
   "use_templates": true,
   "url_template": "/{room_type}?cena_d_from={min_price}&cena_d_to={max_price}&cena_d_unit=4&kvadratura_d_from={min_square}&kvadratura_d_to={max_square}&kvadratura_d_unit=1",
-  "browser" : "chrome",
-  "resolution":"1920,1080",
+  "browser": "chrome",
+  "resolution": "1920,1080",
   "headless": false,
   "detach": true
 }
