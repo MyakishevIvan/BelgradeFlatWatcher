@@ -8,10 +8,10 @@ from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxDriver
 
 
 class DriverFactory:
-    def __init__(self, config:Dict) -> None:
+    def __init__(self, config: Dict) -> None:
         self._config = config
 
-    def init_driver(self)->WebDriver:
+    def init_driver(self) -> WebDriver:
         match self._config.get("browser"):
             case "chrome":
                 chrome_options = ChromeOptions()
@@ -29,4 +29,4 @@ class DriverFactory:
                 firefox_driver.set_window_size(width, height)
                 return firefox_driver
             case _:
-                raise ValueError("Unsupported browser")        
+                raise ValueError("Unsupported browser")

@@ -14,7 +14,7 @@ class SearchService:
         self._use_templates = config["use_templates"]
         self._url_template = config["url_template"]
         self._main_page = MainPage(driver=self._driver, url=self._base_url)
-
+    
     def get_all_flats(self, filters: SearchFilters) -> list[Flat]:
         flats_list: list[Flat] = []
         if self._use_templates:
