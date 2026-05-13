@@ -53,7 +53,7 @@ class DialogService:
     async def _handle_rooms(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         query = update.callback_query
         await query.answer()
-        context.user_data["rooms_count"] = int(query.data)
+        context.user_data["rooms_count"] = query.data
         await query.message.reply_text(
             "Select price range",
             reply_markup=price_keyboard(),

@@ -34,7 +34,7 @@ class SubscribeService:
         self._remove_existing_jobs(context, chat_id)
         context.job_queue.run_repeating(
             callback=self._send_new_flats,
-            interval=60 * 10,
+            interval=60,
             first=10,
             chat_id=chat_id,
             name=str(chat_id),
