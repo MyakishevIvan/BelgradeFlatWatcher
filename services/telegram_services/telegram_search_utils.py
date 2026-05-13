@@ -38,14 +38,13 @@ def extract_filters_data(data: dict[str, Any]) -> dict[str, Any]:
     return {field: data[field] for field in FILTER_FIELDS}
 
 
-async def execute_search(search_executor: SearchExecutor, filters: SearchFilters) -> list[Flat]:
-    return await asyncio.to_thread(search_executor.execute, filters)
-
-
-def create_flat_messages(flats: list[Flat]) -> list[str]:
+def try_create_flat_messages(flats: list[Flat], error_message:str = 'Flats not found') -> list[str]:
+    if not flats:
+        return [error_message]
+    
     messages: list[str] = []
     message = ""
-
+    
     for flat in flats:
         flat_str = f"{flat}\n"
 
