@@ -8,6 +8,7 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "python-telegram-bot[job-queue]>=22.7",
     "selenium>=4.41.0",
+    "sqlalchemy>=2.0.49",
 ]
 
 [dependency-groups]
