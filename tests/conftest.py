@@ -21,7 +21,7 @@ def setup() -> tuple[DriverManager, dict]:
 
 @pytest.fixture
 def test_filter():
-    return SearchFilters(min_price='10', max_price='200', min_square='10', max_square='30', rooms_count='1')
+    return SearchFilters(min_price='10', max_price='200', min_square='10', max_square='30', rooms_type='1')
 
 @pytest.fixture
 def fresh_db():

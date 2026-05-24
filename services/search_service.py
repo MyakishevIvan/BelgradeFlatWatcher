@@ -43,8 +43,8 @@ class SearchService:
                 max_price=filters.max_price,
                 min_square=filters.min_square,
                 max_square=filters.max_square,
-                min_rooms=f"{filters.rooms_count}.0",
-                max_rooms=f"{filters.rooms_count}.0",
+                min_rooms=f"{filters.rooms_type}.0",
+                max_rooms=f"{filters.rooms_type}.0",
             )
 
     def _build_search_url(self, filters: SearchFilters) -> str:

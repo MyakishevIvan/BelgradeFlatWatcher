@@ -5,6 +5,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from data_base.data_base import init_db
+from repositories.seen_flat_repository import SeenFlatRepository
+from repositories.subscription_repository import SubscriptionRepository
 from services.search_executor import SearchExecutor
 from services.telegram_services.flat_bot import FlatBot
 from webdriver.driver_manager import DriverManager
@@ -22,7 +24,14 @@ if __name__ == '__main__':
         raise Exception('No db_url for database')
     
     init_db(db_url=db_url)
+    flats_repo = SeenFlatRepository()
+    subscribe_repo = SubscriptionRepository()
     driver_manager = DriverManager(config=config)
     search_executor = SearchExecutor(config=config, driver_manager=driver_manager)
-    flat_bot = FlatBot(token=token, search_executor=search_executor)
+    flat_bot = FlatBot(
+        token=token,
+        search_executor=search_executor,
+        flat_repo=flats_repo,
+        subscribe_repo=subscribe_repo
+    )
     flat_bot.run()

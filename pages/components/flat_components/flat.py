@@ -4,6 +4,7 @@ from datetime import date
 
 @dataclass
 class Flat:
+    id: int
     url: str
     name: str
     price: str

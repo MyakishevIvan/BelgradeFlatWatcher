@@ -9,6 +9,8 @@ from telegram.ext import (
     ConversationHandler,
 )
 
+from data_base.models.seen_flats_model import SeenFlat
+from repositories.seen_flat_repository import SeenFlatRepository
 from services.search_executor import SearchExecutor
 from services.telegram_services.telegram_keyboards import (
     price_keyboard,
@@ -17,16 +19,21 @@ from services.telegram_services.telegram_keyboards import (
 )
 from services.telegram_services.telegram_search_utils import (
     build_filters,
-    try_create_flat_messages,
+    try_create_flat_messages, convert_to_model,
 )
 
 ROOMS, PRICE, SQUARE = range(3)
 
 
 class DialogService:
-    def __init__(self, search_executor: SearchExecutor, app: Application) -> None:
+    def __init__(
+            self,search_executor: SearchExecutor,
+            app: Application,
+            flats_repo: SeenFlatRepository
+    ) -> None:
         self._search_executor = search_executor
         self._app = app
+        self._flats_repo = flats_repo
 
     def register_handlers(self) -> None:
         conversation = ConversationHandler(
@@ -81,14 +88,16 @@ class DialogService:
         return await self._run_search(query, context)
 
     async def _run_search(self, query, context):
+        user_id = context.job.user_id
         await query.message.reply_text("Searching...")
         filters = build_filters(context.user_data)
         flats = await asyncio.to_thread(
             self._search_executor.execute,
             filters
         )
+        
         for message in try_create_flat_messages(flats):
             await query.message.reply_text(message, parse_mode="HTML")
         await query.message.reply_text('You can use /subscribe to receive updates once in a day', parse_mode="HTML")
-        
+        self._flats_repo.save_all(convert_to_model(flats, user_id))
         return ConversationHandler.END

@@ -7,7 +7,11 @@ class SeenFlatRepository:
     def save(self,  flat: SeenFlat) -> None:
         with get_session() as session:
             session.add(flat)
-
+    
+    def save_all(self, flats: list[SeenFlat]) -> None:
+        with get_session() as session:
+            session.add_all(flats)
+    
     def get_by_user_id(self, telegram_user_id: int) -> list[SeenFlat]:
         with get_session() as session:
             return (
@@ -15,3 +19,4 @@ class SeenFlatRepository:
                 .filter_by(telegram_user_id=telegram_user_id)
                 .all()
             )
+    
