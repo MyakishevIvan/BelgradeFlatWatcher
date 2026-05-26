@@ -17,7 +17,6 @@ class FlatBot:
             search_executor=search_executor,
             flats_repo=flat_repo
         )
-        
         self._subscribe_service = SubscribeService(
             app=self._app,
             search_executor=search_executor,
@@ -29,6 +28,7 @@ class FlatBot:
     def _register_handlers(self):
         self._dialog_service.register_handlers()
         self._subscribe_service.register_handlers()
-
+        self._subscribe_service.restore_subscription_jobs()
+        
     def run(self):
         self._app.run_polling()

@@ -23,3 +23,7 @@ class SubscriptionRepository:
                 .filter_by(telegram_user_id=telegram_user_id)
                 .delete()
             )
+    
+    def get_all(self) -> list[Subscription]:
+        with get_session() as session:
+            return session.query(Subscription).all()

@@ -32,8 +32,22 @@ class SubscribeService:
         self._app.add_handler(CommandHandler("subscribe", self._subscribe))
         self._app.add_handler(CommandHandler("unsubscribe", self._unsubscribe))
 
+    def restore_subscription_jobs(self) -> None:
+        subscriptions = self._subscribe_repo.get_all()
+
+        for subscription in subscriptions:
+            self._app.job_queue.run_repeating(
+                callback=self._send_new_flats,
+                interval=60,
+                first=10,
+                chat_id=subscription.chat_id,
+                user_id=subscription.telegram_user_id,
+                name=str(subscription.chat_id),
+            )
+    
     async def _subscribe(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.effective_chat.id
+        user_id = update.effective_user.id
         missing_fields = get_missing_filter_fields(context.user_data)
 
         if missing_fields:
@@ -55,22 +69,23 @@ class SubscribeService:
             interval=60,
             first=10,
             chat_id=chat_id,
+            user_id=user_id,
             name=str(chat_id),
         )
-        await update.message.reply_text("Подписка включена.")
+        await update.message.reply_text("Subscription enabled")
 
     async def _unsubscribe(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.effective_chat.id
         jobs = context.job_queue.get_jobs_by_name(str(chat_id))
 
         if not jobs:
-            await update.message.reply_text("Активной подписки нет.")
+            await update.message.reply_text("No active subscription found.")
             return
 
         self._remove_existing_jobs(context, chat_id)
         self._subscribe_repo.remove_by_user_id(telegram_user_id=update.effective_user.id)
         self._flats_repo.remove_by_user_id(telegram_user_id=chat_id)
-        await update.message.reply_text("Подписка отключена.")
+        await update.message.reply_text("Subscription disabled.")
 
     async def _send_new_flats(self, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = context.job.chat_id
@@ -80,8 +95,8 @@ class SubscribeService:
             raise RuntimeError('Subscription not found')
 
         filters = build_filters_from_model(subscribe_model)
-        new_flats = self._select_new_flats(filters=filters, user_id=user_id)
-        messages = try_create_flat_messages(flats=new_flats, error_message='There is no new flats today')
+        new_flats = await self._select_new_flats(filters=filters, user_id=user_id)
+        messages =  try_create_flat_messages(flats=new_flats, error_message='There is no new flats today')
 
         for message in messages:
             await context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
@@ -90,7 +105,7 @@ class SubscribeService:
     async def _select_new_flats(self, filters: SearchFilters, user_id: int) -> list[Flat]:
         all_flats = await asyncio.to_thread(self._search_executor.execute, filters)
         seen_flat = self._flats_repo.get_by_user_id(telegram_user_id=user_id)
-        seen_flats_ids = {flat.id for flat in seen_flat}
+        seen_flats_ids = {flat.flat_id for flat in seen_flat}
         return [flat for flat in all_flats if flat.id not in seen_flats_ids]
 
     def _remove_existing_jobs(self, context: ContextTypes.DEFAULT_TYPE, chat_id: int) -> None:

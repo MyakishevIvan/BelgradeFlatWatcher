@@ -44,7 +44,7 @@ class Subscription(Base):
             max_price=int(filters.max_price),
             min_square=int(filters.min_square),
             max_square=int(filters.max_square),
-            rooms_count=filters.rooms_type,
+            rooms_type=filters.rooms_type,
         )
             
     

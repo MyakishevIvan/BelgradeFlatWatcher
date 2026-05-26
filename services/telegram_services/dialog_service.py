@@ -9,7 +9,6 @@ from telegram.ext import (
     ConversationHandler,
 )
 
-from data_base.models.seen_flats_model import SeenFlat
 from repositories.seen_flat_repository import SeenFlatRepository
 from services.search_executor import SearchExecutor
 from services.telegram_services.telegram_keyboards import (
@@ -88,7 +87,7 @@ class DialogService:
         return await self._run_search(query, context)
 
     async def _run_search(self, query, context):
-        user_id = context.job.user_id
+        user_id = query.from_user.id
         await query.message.reply_text("Searching...")
         filters = build_filters(context.user_data)
         flats = await asyncio.to_thread(
