@@ -3,7 +3,6 @@ import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-from data_base.models.seen_flats_model import SeenFlat
 from data_base.models.subscriptions_model import Subscription
 from pages.components.flat_components.flat import Flat
 from repositories.seen_flat_repository import SeenFlatRepository
@@ -13,7 +12,6 @@ from services.search_filters import SearchFilters
 from services.telegram_services.telegram_search_utils import (
     build_filters,
     try_create_flat_messages,
-    extract_filters_data,
     get_missing_filter_fields, build_filters_from_model, convert_to_model,
 )
 
@@ -44,6 +42,7 @@ class SubscribeService:
                 f"Not enough field: {', '.join(missing_fields)}"
             )
             return
+
         self._remove_existing_jobs(context, chat_id)
         subscription = Subscription.from_filters(
             telegram_user_id=chat_id,
@@ -67,8 +66,10 @@ class SubscribeService:
         if not jobs:
             await update.message.reply_text("Активной подписки нет.")
             return
+
         self._remove_existing_jobs(context, chat_id)
-        self._subscribe_repo.remove(telegram_user_id=update.effective_user.id)
+        self._subscribe_repo.remove_by_user_id(telegram_user_id=update.effective_user.id)
+        self._flats_repo.remove_by_user_id(telegram_user_id=chat_id)
         await update.message.reply_text("Подписка отключена.")
 
     async def _send_new_flats(self, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -77,15 +78,15 @@ class SubscribeService:
         subscribe_model = self._subscribe_repo.get_by_user_id(telegram_user_id=user_id)
         if not subscribe_model:
             raise RuntimeError('Subscription not found')
+
         filters = build_filters_from_model(subscribe_model)
         new_flats = self._select_new_flats(filters=filters, user_id=user_id)
         messages = try_create_flat_messages(flats=new_flats, error_message='There is no new flats today')
+
         for message in messages:
             await context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
-        self._flats_repo.save_all(map())
         self._flats_repo.save_all(convert_to_model(new_flats, user_id))
 
-        
     async def _select_new_flats(self, filters: SearchFilters, user_id: int) -> list[Flat]:
         all_flats = await asyncio.to_thread(self._search_executor.execute, filters)
         seen_flat = self._flats_repo.get_by_user_id(telegram_user_id=user_id)

@@ -16,7 +16,7 @@ class SubscriptionRepository:
                 .first()
             )
 
-    def remove(self, telegram_user_id: int) -> None:
+    def remove_by_user_id(self, telegram_user_id: int) -> None:
         with get_session() as session:
             (
                 session.query(Subscription)

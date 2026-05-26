@@ -14,6 +14,7 @@ class Flat:
     def __str__(self):
         return (
             f'<a href="{self.url}">{self.name}</a>\n'
+            f'id: {self.id}\n'
             f'price: {self.price}\n'
             f'square: {self.square}\n'
             f'publication date: {self.publication_date}\n'

@@ -19,4 +19,12 @@ class SeenFlatRepository:
                 .filter_by(telegram_user_id=telegram_user_id)
                 .all()
             )
+
+    def remove_by_user_id(self, telegram_user_id: int) -> None:
+        with get_session() as session:
+            (
+                session.query(SeenFlat)
+                .filter_by(telegram_user_id=telegram_user_id)
+                .delete()
+            )
     

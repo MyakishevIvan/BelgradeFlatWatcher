@@ -17,6 +17,7 @@ class Flats:
         for element in elements:
             component = FlatComponent(element)
             flat = Flat(
+                id=component.get_id(),
                 url=component.get_url(),
                 name = component.get_name(),
                 price = component.get_price(),

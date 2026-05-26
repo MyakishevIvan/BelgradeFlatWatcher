@@ -11,9 +11,18 @@ class FlatComponent:
     header_locator = (By.CSS_SELECTOR, "h3.product-title a")
     location_locator = (By.CSS_SELECTOR, "ul.subtitle-places")
     date_locator = (By.CSS_SELECTOR, ".publish-date")
+    product_info = (By.CSS_SELECTOR, ".product-item")
 
     def __init__(self, web_element: WebElement):
         self._web_element = web_element
+
+    def get_id(self) -> str:
+        element = self._web_element.find_element(*self.product_info)
+        if not element:
+            raise ValueError("Info element not found")
+
+        flat_id = element.get_attribute("id")
+        return int(flat_id)
 
     def get_square(self) -> str:
         elements = self._web_element.find_elements(*self.square_locator)
