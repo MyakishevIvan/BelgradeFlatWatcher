@@ -11,8 +11,7 @@ from services.search_executor import SearchExecutor
 from services.search_filters import SearchFilters
 from services.telegram_services.telegram_search_utils import (
     build_filters,
-    try_create_flat_messages,
-    get_missing_filter_fields, build_filters_from_model, convert_to_model,
+    try_create_flat_messages, build_filters_from_model, convert_to_model,
 )
 
 
@@ -48,20 +47,20 @@ class SubscribeService:
     async def _subscribe(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.effective_chat.id
         user_id = update.effective_user.id
-        missing_fields = get_missing_filter_fields(context.user_data)
-
-        if missing_fields:
+        try:
+            filters = build_filters(context.user_data)
+        except ValueError as error:
             await update.message.reply_text(
                 "Firstly choose filter by using /search.\n"
-                f"Not enough field: {', '.join(missing_fields)}"
+                f"{error}"
             )
             return
-
+            
         self._remove_existing_jobs(context, chat_id)
         subscription = Subscription.from_filters(
             telegram_user_id=chat_id,
             chat_id=update.effective_user.id,
-            filters=build_filters(context.user_data)
+            filters=filters
         )
         self._subscribe_repo.save(subscription)
         context.job_queue.run_repeating(

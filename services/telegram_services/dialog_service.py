@@ -9,16 +9,12 @@ from telegram.ext import (
     ConversationHandler,
 )
 
+from enums.key_boards import KeyboardType
 from repositories.seen_flat_repository import SeenFlatRepository
 from services.search_executor import SearchExecutor
-from services.telegram_services.telegram_keyboards import (
-    price_keyboard,
-    rooms_keyboard,
-    square_keyboard,
-)
 from services.telegram_services.telegram_search_utils import (
     build_filters,
-    try_create_flat_messages, convert_to_model,
+    try_create_flat_messages, convert_to_model, build_keyboard,
 )
 
 ROOMS, PRICE, SQUARE = range(3)
@@ -52,7 +48,7 @@ class DialogService:
         context.user_data.clear()
         await update.message.reply_text(
             "This bot can help you to find flats in Belgrade!\nSelect rooms count",
-            reply_markup=rooms_keyboard(),
+            reply_markup=build_keyboard(KeyboardType.ROOMS),
         )
         return ROOMS
 
@@ -62,7 +58,7 @@ class DialogService:
         context.user_data["rooms_count"] = query.data
         await query.message.reply_text(
             "Select price range",
-            reply_markup=price_keyboard(),
+            reply_markup=build_keyboard(KeyboardType.PRICE),
         )
         return PRICE
 
@@ -74,7 +70,7 @@ class DialogService:
         context.user_data["max_price"] = max_price
         await query.message.reply_text(
             "Select square range",
-            reply_markup=square_keyboard(),
+            reply_markup=build_keyboard(KeyboardType.SQUARE),
         )
         return SQUARE
 
@@ -89,7 +85,16 @@ class DialogService:
     async def _run_search(self, query, context):
         user_id = query.from_user.id
         await query.message.reply_text("Searching...")
-        filters = build_filters(context.user_data)
+        
+        try:
+            filters = build_filters(context.user_data)
+        except ValueError as error:
+            await query.message.reply_text(
+                "Firstly choose filter by using /search.\n"
+                f"{error}"
+            )
+            return ConversationHandler.END
+        
         flats = await asyncio.to_thread(
             self._search_executor.execute,
             filters
