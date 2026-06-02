@@ -4,7 +4,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from pages.components.flat_components.flat import Flat
 from pages.main_page import MainPage
-from services.search_filters import SearchFilters
+from services.flats.search_filters import SearchFilters
 
 
 class SearchService:

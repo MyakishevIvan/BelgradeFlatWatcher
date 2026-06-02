@@ -4,14 +4,14 @@ from data_base.models.seen_flats_model import SeenFlat
 
 class SeenFlatRepository:
 
-    def save(self,  flat: SeenFlat) -> None:
+    def save(self, flat: SeenFlat) -> None:
         with get_session() as session:
             session.add(flat)
-    
+
     def save_all(self, flats: list[SeenFlat]) -> None:
         with get_session() as session:
             session.add_all(flats)
-    
+
     def get_by_user_id(self, telegram_user_id: int) -> list[SeenFlat]:
         with get_session() as session:
             return (
@@ -20,11 +20,10 @@ class SeenFlatRepository:
                 .all()
             )
 
-    def remove_by_user_id(self, telegram_user_id: int) -> None:
+    def remove(self, telegram_user_id: int) -> None:
         with get_session() as session:
             (
                 session.query(SeenFlat)
                 .filter_by(telegram_user_id=telegram_user_id)
                 .delete()
             )
-    

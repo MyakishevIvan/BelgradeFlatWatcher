@@ -6,9 +6,9 @@ from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 from data_base.models.seen_flats_model import SeenFlat
 from data_base.models.subscriptions_model import Subscription
-from enums.key_boards import KeyboardType
+from enums.keyboards_type import KeyboardType
 from pages.components.flat_components.flat import Flat
-from services.search_filters import SearchFilters
+from services.flats.search_filters import SearchFilters
 
 
 _CONFIG_PATH = Path(__file__).parents[2] / "config/search_config.json"

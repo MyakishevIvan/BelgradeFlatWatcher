@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 import data_base.data_base as db
 from data_base.models.base import Base
-from services.search_filters import SearchFilters
+from services.flats.search_filters import SearchFilters
 from webdriver.driver_manager import DriverManager
 
 

@@ -1,5 +1,5 @@
-from services.search_executor import SearchExecutor
-from services.search_filters import SearchFilters
+from services.flats.search_executor import SearchExecutor
+from services.flats.search_filters import SearchFilters
 
 
 def test_page_filter(setup, test_filter: SearchFilters):

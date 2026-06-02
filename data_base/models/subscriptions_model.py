@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Integer, String
 
 from data_base.models.base import Base
-from services.search_filters import SearchFilters
+from services.flats.search_filters import SearchFilters
 
 
 class Subscription(Base):

@@ -1,6 +1,6 @@
 from pages.components.flat_components.flat import Flat
-from services.search_filters import SearchFilters
-from services.search_service import SearchService
+from services.flats.search_filters import SearchFilters
+from services.flats.search_service import SearchService
 from webdriver.driver_manager import DriverManager
 
 
