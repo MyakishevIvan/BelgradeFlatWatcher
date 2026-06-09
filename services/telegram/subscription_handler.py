@@ -1,8 +1,13 @@
+import logging
+
 from telegram import Update
 from telegram.ext import ContextTypes, JobQueue
 
+from configs.config import Config
 from data_base.models.subscriptions_model import Subscription
 
+
+logger = logging.getLogger(__name__)
 
 class SubscriptionHandler:
 
@@ -14,8 +19,8 @@ class SubscriptionHandler:
         self._remove_existing_jobs(context, chat_id)
         context.job_queue.run_repeating(
             callback=callback,
-            interval=60,
-            first=10,
+            interval=Config.SUBSCRIPTIONS["interval"],
+            first=Config.SUBSCRIPTIONS["first"],
             chat_id=chat_id,
             user_id=update.effective_user.id,
             name=str(chat_id),
@@ -26,13 +31,14 @@ class SubscriptionHandler:
         for subscription in subscriptions:
             self._job_queue.run_repeating(
                 callback=callback,
-                interval=60,
-                first=10,
+                interval=Config.SUBSCRIPTIONS["interval"],
+                first=Config.SUBSCRIPTIONS["first"],
                 chat_id=subscription.chat_id,
                 user_id=subscription.telegram_user_id,
                 name=str(subscription.chat_id),
             )
-
+            logger.info("Subscription jobs for userId=%s", subscription.telegram_user_id)
+            
     async def unsubscribe_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.effective_chat.id
         jobs = context.job_queue.get_jobs_by_name(str(chat_id))

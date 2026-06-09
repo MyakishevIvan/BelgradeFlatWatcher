@@ -8,7 +8,7 @@ from pages.components.button import Button
 
 class Pagination:
     pages_locator = (By.CSS_SELECTOR, "#pager-1 a.page-link")
-    check_button = (By.CSS_SELECTOR, "current.prev")
+    check_button = (By.CSS_SELECTOR, "span.current.prev")
     next_page_button = Button(By.CSS_SELECTOR, ".page-link.next")
 
     def __init__(self, driver: WebDriver):

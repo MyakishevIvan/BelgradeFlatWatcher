@@ -12,7 +12,7 @@ Engine = None
 def init_db(db_url: str):
     global SessionLocal, Engine
 
-    Engine = create_engine(db_url, echo=True)
+    Engine = create_engine(db_url)
     Base.metadata.create_all(Engine)
     SessionLocal = sessionmaker(bind=Engine, expire_on_commit=False)
 

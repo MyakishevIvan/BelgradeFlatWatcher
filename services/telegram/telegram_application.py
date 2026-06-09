@@ -1,10 +1,13 @@
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ConversationHandler
+import logging
 
 from enums.conversation_type import ConversationType
 from services.flats.flats_service import FlatsService
 from services.telegram.dialog_handler import DialogHandler
 from services.telegram.subscription_handler import SubscriptionHandler
 from services.telegram.telegram_controller import TelegramController
+
+logger = logging.getLogger(__name__)
 
 
 class TelegramApplication:
@@ -35,4 +38,5 @@ class TelegramApplication:
 
     def run(self) -> None:
         self._controller.restore_subscription_jobs()
+        logger.info("Bot started")
         self._app.run_polling()

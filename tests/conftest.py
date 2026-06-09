@@ -13,7 +13,7 @@ from webdriver.driver_manager import DriverManager
 
 @pytest.fixture
 def setup() -> tuple[DriverManager, dict]:
-    path = Path(__file__).parents[1] / "config/test_selenium_config.json"
+    path = Path(__file__).parents[1] / "configs/test_selenium_config.json"
     with path.open(encoding="utf-8") as file:
         config = json.load(file)
     driver_manager = DriverManager(config=config)
