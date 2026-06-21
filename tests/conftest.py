@@ -6,22 +6,17 @@ import pytest
 from dotenv import load_dotenv
 
 import data_base.data_base as db
+from configs.config import Config
 from data_base.models.base import Base
-from services.flats.search_filters import SearchFilters
+from services.flats.search_executor import SearchExecutor
 from webdriver.driver_manager import DriverManager
 
 
 @pytest.fixture
-def setup() -> tuple[DriverManager, dict]:
-    path = Path(__file__).parents[1] / "configs/test_selenium_config.json"
-    with path.open(encoding="utf-8") as file:
-        config = json.load(file)
-    driver_manager = DriverManager(config=config)
-    yield driver_manager, config
-
-@pytest.fixture
-def test_filter():
-    return SearchFilters(min_price='10', max_price='200', min_square='10', max_square='30', rooms_type='1')
+def search_executor() -> SearchExecutor:
+    driver_manager = DriverManager(config=Config.SELENIUM)
+    return SearchExecutor(config=Config.SELENIUM, driver_manager=driver_manager)
+    
 
 @pytest.fixture
 def fresh_db():

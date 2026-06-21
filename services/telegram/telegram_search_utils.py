@@ -50,7 +50,8 @@ def build_keyboard(keyboard_type: KeyboardType) -> InlineKeyboardMarkup:
         for text, data in Config.KEYBOARDS[keyboard_type]
     ])
 
-def try_create_flat_messages(flats: list[Flat], error_message: str = 'Flats not found') -> list[str]:
+def try_create_flat_messages(flats: list[Flat],
+                             error_message: str = 'Flats not found') -> list[str]:
     if not flats:
         return [error_message]
 

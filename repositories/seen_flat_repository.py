@@ -4,10 +4,6 @@ from data_base.models.seen_flats_model import SeenFlat
 
 class SeenFlatRepository:
 
-    def save(self, flat: SeenFlat) -> None:
-        with get_session() as session:
-            session.add(flat)
-
     def save_all(self, flats: list[SeenFlat]) -> None:
         with get_session() as session:
             session.add_all(flats)
@@ -20,7 +16,7 @@ class SeenFlatRepository:
                 .all()
             )
 
-    def remove(self, telegram_user_id: int) -> None:
+    def remove_by_user_id(self, telegram_user_id: int) -> None:
         with get_session() as session:
             (
                 session.query(SeenFlat)
